@@ -3,50 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Happy Birthday!</title>
+  <title>Hear Ye, Hear Ye!</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      background: linear-gradient(135deg, #ffb6c1, #ffccff);
+      background: #fdf6e3 url('https://i.imgur.com/8wA3eL3.png') repeat; /* parchment texture */
+      font-family: "UnifrakturCook", "Old English Text MT", cursive;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
-    }
-    .card {
-      background: white;
-      padding: 2rem;
-      border-radius: 1.5rem;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      color: #3b2a1a;
       text-align: center;
-      max-width: 400px;
+      padding: 1rem;
+    }
+    .scroll {
+      background: rgba(255, 248, 220, 0.9);
+      padding: 2rem;
+      border: 8px solid #8b0000;
+      border-radius: 1rem;
+      box-shadow: 0 0 25px rgba(0,0,0,0.5);
+      max-width: 600px;
     }
     h1 {
-      color: #ff4081;
-      font-size: 2rem;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
     }
     p {
-      font-size: 1.2rem;
-      margin: 1rem 0;
+      font-size: 1.3rem;
+      line-height: 1.8;
     }
-    .heart {
-      font-size: 3rem;
-      animation: pulse 1s infinite;
+    .seal {
+      margin-top: 2rem;
+      width: 100px;
+      height: 100px;
+      background: #8b0000;
+      border-radius: 50%;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff5e6;
+      font-size: 1.5rem;
+      font-family: serif;
+      box-shadow: inset -4px -6px 10px rgba(0,0,0,0.6),
+                  inset 4px 4px 10px rgba(255,255,255,0.2);
     }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
+    @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>🎉 Vse Najboljše, My Love! 🎉</h1>
-    <p>You are my favorite feature,<br>always bug-free in my heart ❤️</p>
-    <div class="heart">💻💕</div>
+  <div class="scroll">
+    <h1>📜 Hear Ye, Hear Ye! 📜</h1>
+    <p>
+      On this most glorious day,<br>
+      we celebrate the birth of<br>
+      <strong>My Fairest Lady</strong>.  
+    </p>
+    <p>
+      May thy days be bug-free,<br>
+      thy heart full of joy,<br>
+      and thy code ever compileth true.  
+    </p>
+    <div class="seal">♛</div>
   </div>
 </body>
 </html>
-
