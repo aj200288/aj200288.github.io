@@ -3,7 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Medieval Scroll — Unroll Animation</title>
+  <title>Medieval Scroll — Seal Break Trigger</title>
+
+  
+  <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
+  
   <style>
     :root{
       --bg:#1b1b17;
@@ -18,10 +22,8 @@
     body{
       margin:0;display:flex;align-items:center;justify-content:center;
       background: radial-gradient(circle at 20% 10%, #2b2a27 0%, var(--bg) 40%);
-      font-family: Georgia, 'Times New Roman', serif;
+      font-family: 'MedievalSharp', cursive;
       color: #fff;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
     }
 
     .stage{
@@ -29,142 +31,156 @@
       user-select:none;
     }
 
-    /* Scroll container */
     .scroll-wrap{
       width:100%;height:100%;position:relative;display:flex;align-items:center;justify-content:center;
     }
 
-    /* The paper area that will 'unroll' */
     .scroll {
-      width:82%;height:78%;background:linear-gradient(180deg,var(--paper) 0%, #f0e7cf 100%);
-      border-radius:6px;position:relative;overflow:visible;box-shadow: 0 18px 40px var(--shadow);
+      width:82%;height:78%;
+      background:linear-gradient(180deg,var(--paper) 0%, #f0e7cf 100%);
+      border-radius:6px;position:relative;overflow:visible;
+      box-shadow: 0 18px 40px var(--shadow);
       transform-origin:50% 0%;
     }
 
-    /* Top and bottom rolled rods */
     .roller{
-      position:absolute;left:50%;transform:translateX(-50%);width:86%;height:38px;background:linear-gradient(90deg,#b58e4a,#7a5b2a);
-      border-radius:0px;box-shadow:inset 0 2px 6px rgba(255,255,255,0.06), 0 10px 18px rgba(0,0,0,0.5);
+      position:absolute;left:50%;transform:translateX(-50%);width:86%;height:38px;
+      background:linear-gradient(90deg,#b58e4a,#7a5b2a);
+      box-shadow:inset 0 2px 6px rgba(255,255,255,0.06), 0 10px 18px rgba(0,0,0,0.5);
       z-index:5;
     }
     .roller.top{top:0px}
     .roller.bottom{top:50px}
 
-    /* Decorative roller ends */
     .roller:before,.roller:after{
-      content:'';position:absolute;top:50%;transform:translateY(-50%);width:36px;height:48px;background:linear-gradient(180deg,#7e5b2a,#4b3518);border-radius:8px;box-shadow:0 8px 16px rgba(0,0,0,0.45);
+      content:'';position:absolute;top:50%;transform:translateY(-50%);
+      width:36px;height:48px;
+      background:linear-gradient(180deg,#7e5b2a,#4b3518);
+      border-radius:8px;
+      box-shadow:0 8px 16px rgba(0,0,0,0.45);
     }
     .roller:before{left:-28px}
     .roller:after{right:-28px}
 
-    /* The visible content area clip that will animate to mimic unrolling */
+    /* White parchment masks near rollers */
+    .scroll-mask-top,
+    .scroll-mask-bottom {
+      position:absolute;left:50%;transform:translateX(-50%);
+      width:81%;height:46px;
+      background:var(--paper);
+      z-index:2;
+      border-left:2px solid var(--paper-edge);
+      border-right:2px solid var(--paper-edge);
+    }
+    .scroll-mask-top{top:0;}
+    .scroll-mask-bottom{top:42px;}
+
     .paper-clipper{
-      position:absolute;left:9%;top:6.5%;width:82%;height:78%;overflow:hidden;z-index:3;
+      position:absolute;left:9%;top:6.5%;width:82%;height:75%;
+      overflow:hidden;z-index:3;
       display:flex;align-items:center;justify-content:center;pointer-events:none;
     }
     .paper-inner{
-      width:100%;height:100%;padding:36px 48px;box-sizing:border-box;transform-origin:50% 0%;
+      width:100%;height:100%;padding:36px 48px;box-sizing:border-box;
       background:linear-gradient(180deg,var(--paper) 0%, #f0e7cf 100%);
-      border-radius:4px;box-shadow:inset 0 2px 0 rgba(0,0,0,0.02);
+      border-radius:4px;
       font-size:18px;line-height:1.6;color:#2b230f;text-align:left;
+      position:relative;
     }
 
     /* Seal */
     .seal{
-      position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);z-index:10;pointer-events:auto;
-      width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.5), inset -6px -8px 16px rgba(255,255,255,0.06);
+      position:absolute;left:50%;top:10%;transform:translate(-50%,-50%);
+      width:110px;height:110px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
       background:radial-gradient(circle at 35% 30%, #c01a1a 0%, var(--wax) 50%, #4d0a0a 100%);
+      box-shadow:0 8px 30px rgba(0,0,0,0.5), inset -6px -8px 16px rgba(255,255,255,0.06);
       border:4px solid rgba(0,0,0,0.08);
-      transform-origin:center center;
+      z-index:10;cursor:pointer;
     }
-    .seal .stamp{font-weight:bold;font-size:36px;color:rgba(255,240,220,0.92);font-family: 'Times New Roman', serif;}
+    .seal .stamp{
+      font-weight:bold;font-size:36px;
+      color:rgba(255,240,220,0.92);
+     font-family:'MedievalSharp', cursive;
+    }
 
-    /* wax drips (simple decorative) */
-    .drip{position:absolute;bottom:2px;width:12px;height:26px;border-radius:12px;background:rgba(0,0,0,0.08);left:50%;transform:translateX(-50%);} 
+    .drip{
+      position:absolute;bottom:2px;width:12px;height:26px;border-radius:12px;
+      background:rgba(0,0,0,0.08);left:50%;transform:translateX(-50%);
+    }
 
-    /* Controls */
-    .controls{position:absolute;right:8px;top:8px;z-index:30}
-    .btn{background:transparent;border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.9);padding:8px 12px;border-radius:8px;cursor:pointer}
+    .controls{position:absolute;right:-50px;top:0px;z-index:30}
+    .btn{background:transparent;border:1px solid rgba(255,255,255,0.14);
+      color:rgba(255,255,255,0.9);padding:8px 12px;border-radius:8px;cursor:pointer}
     .btn:active{transform:translateY(1px)}
 
-    /* Initial state before animation */
-    .paper-clipper[data-state="closed"]{clip-path: inset(0 0 100% 0);
+    /* States */
+    .paper-clipper[data-state="closed"]{
+      clip-path: inset(0 0 100% 0);
       transform: translateY(-6px) rotateX(12deg) scale(0.995);
     }
-    .paper-clipper[data-state="opened"]{clip-path: inset(0 0 0 0);transition: clip-path 1.6s cubic-bezier(.2,.9,.2,1), transform 1.6s cubic-bezier(.2,.9,.2,1);transform: translateY(0) rotateX(0) scale(1);} 
-
-    /* Subtle parchment edge burn effect */
-    .paper-inner:before{content:'';position:absolute;left:-12px;top:-12px;right:-12px;bottom:-12px;border-radius:8px;pointer-events:none;background:linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0));mix-blend-mode:multiply}
-
-    /* Roller motion (small lift as it unrolls) */
-    /* .roller[data-state="lifting"]{transform: translateY(-8px);transition:transform 1.6s cubic-bezier(.2,.9,.2,1)} */
-    /* .roller[data-state="lifting"]{
-      transform: translateX(-50%) translateY(80px);
-      transition: transform 1.6s cubic-bezier(.2,.9,.2,1);
-    } */
-
-    /* Bottom roller moves down the full paper height */
-    .roller.bottom[data-state="lifting"] {
-      transform: translateX(-50%) translateY(350px);
-      transition: transform 1.6s cubic-bezier(.2,.9,.2,1);
+    .paper-clipper[data-state="opened"]{
+      clip-path: inset(0 0 0 0);
+      transition: clip-path 1.6s cubic-bezier(.2,.9,.2,1),
+                  transform 1.6s cubic-bezier(.2,.9,.2,1);
+      transform: translateY(0) rotateX(0) scale(1);
     }
 
-    /* Top roller can slightly lift */
+    .roller.bottom[data-state="lifting"] {
+      transform: translateX(-50%) translateY(320px);
+      transition: transform 1.6s cubic-bezier(.2,.9,.2,1);
+    }
     .roller.top[data-state="lifting"] {
       transform: translateX(-50%) translateY(0px);
       transition: transform 1.6s cubic-bezier(.2,.9,.2,1);
     }
 
-
-
-
-    /* Seal animation classes */
-    .seal.hidden{opacity:0;transform:scale(0.6) translateY(10px)}
-    .seal.appeared{animation:sealPop 700ms cubic-bezier(.2,.85,.2,1) forwards}
+    /* Seal animations */
     .seal.melt{animation:sealMelt 1200ms forwards ease-in;}
-
-    @keyframes sealPop{
-      0%{opacity:0;transform:scale(0.4) translateY(20px) rotate(-6deg)}
-      70%{transform:scale(1.07) translateY(-6px) rotate(4deg)}
-      100%{opacity:1;transform:scale(1) translateY(0) rotate(0deg)}
-    }
     @keyframes sealMelt{
-      0%{transform:scale(1);opacity:1}
-      60%{transform:scale(1.12) translateY(6px);opacity:0.95}
-      100%{transform:scale(1.8) translateY(36px);opacity:0}
+      0%{transform:translate(-50%,-50%) scale(1);opacity:1}
+      60%{transform:translate(-50%,-50%) scale(1.12) translateY(6px);opacity:0.95}
+      100%{transform:translate(-50%,-50%) scale(1.8) translateY(36px);opacity:0}
     }
 
-    /* small responsive */
-    @media (max-width:880px){:root{--width:520px;--height:380px} .seal{width:84px;height:84px}.roller:before,.roller:after{width:26px;height:40px}}
-    @media (max-width:520px){:root{--width:320px;--height:480px}.paper-inner{font-size:15px}}
-
+    @media (max-width:880px){
+      :root{--width:520px;--height:380px}
+      .seal{width:84px;height:84px}
+      .roller:before,.roller:after{width:26px;height:40px}
+    }
+    @media (max-width:520px){
+      :root{--width:320px;--height:480px}
+      .paper-inner{font-size:15px}
+    }
   </style>
 </head>
 <body>
   <div class="stage">
     <div class="controls">
-      <button class="btn" id="replay">Replay</button>
+      <button class="btn" id="resetBtn">Reset</button>
     </div>
     <div class="scroll-wrap">
       <div class="roller top" id="rollerTop"></div>
       <div class="roller bottom" id="rollerBottom"></div>
 
+      <!-- parchment ends -->
+      <div class="scroll-mask-top"></div>
+      <div class="scroll-mask-bottom"></div>
+
       <div class="paper-clipper" id="clipper" data-state="closed">
         <div class="paper-inner" id="paperInner">
-          <h1 style="margin-top:0;font-size:26px;letter-spacing:1px;">Hearken, traveller</h1>
+          <h1 style="margin-top:10;font-size:26px;letter-spacing:1px;">Vse najbolše za 23. rojstni dan!!!</h1>
           <p>
-            Hello this scroll lies a fragment of an old tale: where kings planned by candlelight, and messengers cut across moors by dawn. The parchment is brittle to the touch, the ink slightly faded — but the words endure.
-          </p>
+            Ker si se letos lotila učenja programiranja, ti podarjam darilo, ki ne pozna muh električnih hroščev: komplet za izdelavo pečatov.
           <p>
-            Let this note be a reminder: small secrets, sealed in wax and tucked away, often carry the greatest weight.
+            Prav toko ti pripada pečat, narejen po tvoji želji. Naj bo ta znamenje tvoje moči, modrosti in srčnosti.
           </p>
-          <p style="margin-bottom:0.2em;font-style:italic;">— From the House of Sable</p>
+          <p style="margin-bottom:0.2em;font-style:italic;">— Vedno tvoj Anže</p>
         </div>
       </div>
 
-      <div class="seal hidden" id="seal" title="Wax Seal">
-        <div class="stamp">S</div>
+      <div class="seal" id="seal" title="Wax Seal">
+        <div class="stamp">AJ</div>
         <div class="drip"></div>
       </div>
 
@@ -177,51 +193,35 @@
       const seal = document.getElementById('seal');
       const rollerTop = document.getElementById('rollerTop');
       const rollerBottom = document.getElementById('rollerBottom');
-      const replay = document.getElementById('replay');
+      const resetBtn = document.getElementById('resetBtn');
 
-      function animateOnce(){
-        // reset states
+      function resetScroll(){
         clipper.dataset.state = 'closed';
-        seal.classList.remove('appeared','melt');
-        seal.classList.add('hidden');
         rollerTop.dataset.state = 'default';
         rollerBottom.dataset.state = 'default';
-
-        // force reflow to allow re-animation
-        void clipper.offsetWidth;
-
-        // stage timings
-        setTimeout(()=>{
-          // lift rollers slightly as if unwrapping
-          rollerTop.dataset.state = 'lifting';
-          rollerBottom.dataset.state = 'lifting';
-          // reveal paper
-          clipper.dataset.state = 'opened';
-        }, 160);
-
-        // pop seal after a bit
-        setTimeout(()=>{
-          seal.classList.remove('hidden');
-          seal.classList.add('appeared');
-        }, 650);
-
-        // after some time, melt / fade seal
-        setTimeout(()=>{
-          seal.classList.add('melt');
-        }, 2300);
+        seal.style.opacity = '1';
+        seal.style.transform = 'translate(-50%,-50%) scale(1)';
+        seal.classList.remove('melt');
       }
 
-      // start on load
-      window.addEventListener('load', ()=>{animateOnce();});
-      replay.addEventListener('click', ()=>{animateOnce();});
+      function playAnimation(){
+        seal.classList.add('melt');
+        setTimeout(()=>{
+          rollerTop.dataset.state = 'lifting';
+          rollerBottom.dataset.state = 'lifting';
+          clipper.dataset.state = 'opened';
+        }, 1000);
+      }
 
-      // optional: click seal to briefly bounce it
       seal.addEventListener('click', ()=>{
-        seal.classList.remove('melt');
-        seal.classList.add('appeared');
-        setTimeout(()=>seal.classList.remove('appeared'),900);
+        if (!seal.classList.contains('melt')){
+          playAnimation();
+        }
       });
 
+      resetBtn.addEventListener('click', resetScroll);
+
+      resetScroll();
     })();
   </script>
 </body>
